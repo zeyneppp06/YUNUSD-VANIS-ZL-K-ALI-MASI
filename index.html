@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+
+<html lang="tr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Çevrimiçi Sözlük</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+
+        * {
+
+            margin: 0;
+
+            padding: 0;
+
+            box-sizing: border-box;
+
+        }
+
+
+
+        body {
+
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+            min-height: 100vh;
+
+            padding: 20px;
+
+            color: #333;
+
+        }
+
+
+
+        .container {
+
+            max-width: 1200px;
+
+            margin: 0 auto;
+
+        }
+
+
+
+        header {
+
+            text-align: center;
+
+            margin-bottom: 40px;
+
+            color: white;
+
+        }
+
+
+
+        header h1 {
+
+            font-size: 3rem;
+
+            margin-bottom: 10px;
+
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+
+        }
+
+
+
+        header p {
+
+            font-size: 1.2rem;
+
+            opacity: 0.9;
+
+        }
+
+
+
+        .card {
+
+            background: white;
+
+            border-radius: 15px;
+
+            padding: 30px;
+
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+
+            margin-bottom: 30px;
+
+        }
+
+
+
+        .form-group {
+
+            display: grid;
+
+            grid-template-columns: 1fr 1fr 1fr auto;
+
+            gap: 15px;
+
+            margin-bottom: 20px;
+
+        }
+
+
+
+        input, textarea {
+
+            padding: 12px 15px;
+
+            border: 2px solid #e1e5e9;
+
+            border-radius: 8px;
+
+            font-size: 1rem;
+
+            transition: all 0.3s ease;
+
+        }
+
+
+
+        input:focus, textarea:focus {
+
+            outline: none;
+
+            border-color: #667eea;
+
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+
+        }
+
+
+
+        button {
+
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+            color: white;
+
+            border: none;
+
+            padding: 12px 25px;
+
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            font-size: 1rem;
+
+            font-weight: 600;
+
+            transition: all 0.3s ease;
+
+        }
+
+
+
+        button:hover {
+
+            transform: translateY(-2px);
+
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+
+        }
+
+
+
+        table {
+
+            width: 100%;
+
+            border-collapse: collapse;
+
+            margin-top: 20px;
+
+            background: white;
+
+            border-radius: 10px;
+
+            overflow: hidden;
+
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+
+        }
+
+
+
+        th {
+
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+            color: white;
+
+            padding: 15px;
+
+            text-align: left;
+
+            font-weight: 600;
+
+        }
+
+
+
+        td {
+
+            padding: 15px;
+
+            border-bottom: 1px solid #f1f3f4;
+
+        }
+
+
+
+        tr:hover {
+
+            background-color: #f8f9fa;
+
+        }
+
+
+
+        .word-count {
+
+            text-align: center;
+
+            color: white;
+
+            font-size: 1.1rem;
+
+            margin: 20px 0;
+
+        }
+
+
+
+        .stats {
+
+            display: grid;
+
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+
+            gap: 20px;
+
+            margin-bottom: 30px;
+
+        }
+
+
+
+        .stat-card {
+
+            background: white;
+
+            padding: 20px;
+
+            border-radius: 10px;
+
+            text-align: center;
+
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+
+        }
+
+
+
+        .stat-card i {
+
+            font-size: 2rem;
+
+            color: #667eea;
+
+            margin-bottom: 10px;
+
+        }
+
+
+
+        .stat-number {
+
+            font-size: 2rem;
+
+            font-weight: bold;
+
+            color: #333;
+
+        }
+
+
+
+        .stat-label {
+
+            color: #666;
+
+            margin-top: 5px;
+
+        }
+
+
+
+        .delete-btn {
+
+            background: #ff4757;
+
+            color: white;
+
+            border: none;
+
+            padding: 8px 15px;
+
+            border-radius: 5px;
+
+            cursor: pointer;
+
+            font-size: 0.9rem;
+
+        }
+
+
+
+        .delete-btn:hover {
+
+            background: #ff3742;
+
+            transform: translateY(-1px);
+
+        }
+
+
+
+        @media (max-width: 768px) {
+
+            .form-group {
+
+                grid-template-columns: 1fr;
+
+            }
+
+            
+
+            .stats {
+
+                grid-template-columns: 1fr;
+
+            }
+
+            
+
+            header h1 {
+
+                font-size: 2rem;
+
+            }
+
+        }
+
+
+
+        .empty-state {
+
+            text-align: center;
+
+            padding: 40px;
+
+            color: #666;
+
+        }
+
+
+
+        .empty-state i {
+
+            font-size: 3rem;
+
+            color: #ddd;
+
+            margin-bottom: 15px;
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <header>
+
+            <h1><i class="fas fa-book"></i> Çevrimiçi Sözlük</h1>
+
+            <p>Kelime dağarcığınızı birlikte zenginleştirelim</p>
+
+        </header>
+
+
+
+        <div class="stats">
+
+            <div class="stat-card">
+
+                <i class="fas fa-database"></i>
+
+                <div class="stat-number" id="totalWords">0</div>
+
+                <div class="stat-label">Toplam Kelime</div>
+
+            </div>
+
+            <div class="stat-card">
+
+                <i class="fas fa-users"></i>
+
+                <div class="stat-number" id="activeUsers">1</div>
+
+                <div class="stat-label">Aktif Kullanıcı</div>
+
+            </div>
+
+            <div class="stat-card">
+
+                <i class="fas fa-calendar-day"></i>
+
+                <div class="stat-number" id="todayWords">0</div>
+
+                <div class="stat-label">Bugün Eklenen</div>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="card">
+
+            <h2 style="margin-bottom: 20px; color: #333;">Yeni Kelime Ekle</h2>
+
+            <div class="form-group">
+
+                <input type="text" id="word" placeholder="Kelime" onkeypress="handleEnter(event)">
+
+                <input type="text" id="meaning" placeholder="Anlamı" onkeypress="handleEnter(event)">
+
+                <input type="text" id="example" placeholder="Örnek Cümle" onkeypress="handleEnter(event)">
+
+                <button onclick="addWord()"><i class="fas fa-plus"></i> Ekle</button>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="word-count" id="wordCountText">Henüz kelime eklenmemiş</div>
+
+
+
+        <div class="card">
+
+            <h2 style="margin-bottom: 20px; color: #333;">Sözlük</h2>
+
+            <table id="dictionaryTable">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Kelime</th>
+
+                        <th>Anlamı</th>
+
+                        <th>Örnek Cümle</th>
+
+                        <th>İşlem</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="tableBody">
+
+                    <!-- Kelimeler buraya eklenecek -->
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+
+    <script>
+
+        // Sayfa yüklendiğinde çalışacak fonksiyonlar
+
+        document.addEventListener('DOMContentLoaded', function() {
+
+            loadWords();
+
+            updateStats();
+
+        });
+
+
+
+        // Kelime ekleme fonksiyonu
+
+        function addWord() {
+
+            const word = document.getElementById('word').value.trim();
+
+            const meaning = document.getElementById('meaning').value.trim();
+
+            const example = document.getElementById('example').value.trim();
+
+            
+
+            if (word === '' || meaning === '' || example === '') {
+
+                alert('Lütfen tüm alanları doldurun!');
+
+                return;
+
+            }
+
+            
+
+            // Yeni kelimeyi kaydet
+
+            saveWord(word, meaning, example);
+
+            
+
+            // Formu temizle
+
+            document.getElementById('word').value = '';
+
+            document.getElementById('meaning').value = '';
+
+            document.getElementById('example').value = '';
+
+            
+
+            // İlk inputa odaklan
+
+            document.getElementById('word').focus();
+
+        }
+
+
+
+        // Enter tuşu ile ekleme
+
+        function handleEnter(event) {
+
+            if (event.key === 'Enter') {
+
+                addWord();
+
+            }
+
+        }
+
+
+
+        // Kelimeyi localStorage'a kaydet
+
+        function saveWord(word, meaning, example) {
+
+            let dictionary = JSON.parse(localStorage.getItem('dictionary') || '[]');
+
+            
+
+            const newWord = {
+
+                id: Date.now(),
+
+                word: word,
+
+                meaning: meaning,
+
+                example: example,
+
+                date: new Date().toLocaleDateString('tr-TR'),
+
+                timestamp: new Date().getTime()
+
+            };
+
+            
+
+            dictionary.push(newWord);
+
+            localStorage.setItem('dictionary', JSON.stringify(dictionary));
+
+            
+
+            loadWords();
+
+            updateStats();
+
+        }
+
+
+
+        // Kelimeleri yükle ve tabloya ekle
+
+        function loadWords() {
+
+            const dictionary = JSON.parse(localStorage.getItem('dictionary') || '[]');
+
+            const tableBody = document.getElementById('tableBody');
+
+            
+
+            tableBody.innerHTML = '';
+
+            
+
+            if (dictionary.length === 0) {
+
+                tableBody.innerHTML = `
+
+                    <tr>
+
+                        <td colspan="4" class="empty-state">
+
+                            <i class="fas fa-book-open"></i>
+
+                            <div>Henüz kelime eklenmemiş</div>
+
+                            <div style="margin-top: 10px; font-size: 0.9rem;">İlk kelimeyi eklemek için yukarıdaki formu kullanın</div>
+
+                        </td>
+
+                    </tr>
+
+                `;
+
+                return;
+
+            }
+
+            
+
+            // Kelimeleri ters sırada göster (en yeni üstte)
+
+            dictionary.slice().reverse().forEach(word => {
+
+                const row = document.createElement('tr');
+
+                
+
+                row.innerHTML = `
+
+                    <td><strong>${word.word}</strong></td>
+
+                    <td>${word.meaning}</td>
+
+                    <td><em>"${word.example}"</em></td>
+
+                    <td>
+
+                        <button class="delete-btn" onclick="deleteWord(${word.id})">
+
+                            <i class="fas fa-trash"></i> Sil
+
+                        </button>
+
+                    </td>
+
+                `;
+
+                
+
+                tableBody.appendChild(row);
+
+            });
+
+        }
+
+
+
+        // Kelime silme
+
+        function deleteWord(id) {
+
+            if (confirm('Bu kelimeyi silmek istediğinizden emin misiniz?')) {
+
+                let dictionary = JSON.parse(localStorage.getItem('dictionary') || '[]');
+
+                dictionary = dictionary.filter(word => word.id !== id);
+
+                localStorage.setItem('dictionary', JSON.stringify(dictionary));
+
+                loadWords();
+
+                updateStats();
+
+            }
+
+        }
+
+
+
+        // İstatistikleri güncelle
+
+        function updateStats() {
+
+            const dictionary = JSON.parse(localStorage.getItem('dictionary') || '[]');
+
+            const today = new Date().toLocaleDateString('tr-TR');
+
+            
+
+            const todayWords = dictionary.filter(word => word.date === today).length;
+
+            
+
+            document.getElementById('totalWords').textContent = dictionary.length;
+
+            document.getElementById('todayWords').textContent = todayWords;
+
+            
+
+            // Kelime sayısı metnini güncelle
+
+            const wordCountText = document.getElementById('wordCountText');
+
+            if (dictionary.length === 0) {
+
+                wordCountText.textContent = 'Henüz kelime eklenmemiş';
+
+            } else {
+
+                wordCountText.textContent = `Toplam ${dictionary.length} kelime bulunuyor • Bugün ${todayWords} yeni kelime eklendi`;
+
+            }
+
+        }
+
+
+
+        // Örnek veri ekleme (isteğe bağlı)
+
+        function addSampleData() {
+
+            const sampleWords = [
+
+                {
+
+                    word: "Merhaba",
+
+                    meaning: "Selamlama sözü",
+
+                    example: "Merhaba, nasılsınız?"
+
+                },
+
+                {
+
+                    word: "Teşekkür",
+
+                    meaning: "Minnettarlık ifadesi", 
+
+                    example: "Yardımın için teşekkür ederim."
+
+                },
+
+                {
+
+                    word: "Güle güle",
+
+                    meaning: "Veda sözü",
+
+                    example: "Güle güle, yarın görüşürüz!"
+
+                }
+
+            ];
+
+            
+
+            sampleWords.forEach(item => {
+
+                saveWord(item.word, item.meaning, item.example);
+
+            });
+
+        }
+
+
+
+        // Sayfa açıldığında örnek veri yoksa ekle (isteğe bağlı)
+
+        window.onload = function() {
+
+            const dictionary = JSON.parse(localStorage.getItem('dictionary') || '[]');
+
+            if (dictionary.length === 0) {
+
+                // Örnek veri eklemek isterseniz aşağıdaki satırın yorumunu kaldırın
+
+                // addSampleData();
+
+            }
+
+        };
+
+    </script>
+
+</body>
+
+</html>
